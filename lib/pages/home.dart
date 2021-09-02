@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../change_name_card.dart';
 import '../drawer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Homepage extends StatefulWidget {
   @override
@@ -11,9 +11,19 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   TextEditingController _nameController = TextEditingController();
   var myText = 'Fish name';
+  var url = "https://jsonplaceholder.typicode.com/photos";
+  var data;
   @override
   void initState() {
     super.initState();
+    getData();
+  }
+
+  getData() async {
+    var result = await http.get(Uri.parse(url));
+    data = jsonDecode(result.body);
+    print(data);
+    setState(() {});
   }
 
   @override
@@ -29,12 +39,21 @@ class _HomepageState extends State<Homepage> {
       body: Container(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Card(
-              child: ChangeNameCard(
-                  myText: myText, nameController: _nameController),
-            ),
-          ),
+          child: data != null
+              ? Card(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          leading: Image.network(data[index]['url']),
+                          title: Text(data[index]['title']),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : Center(child: CircularProgressIndicator()),
         ),
       ),
       drawer: NewDrawer(),

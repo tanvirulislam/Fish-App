@@ -40,3 +40,9 @@ class ChangeNameCard extends StatelessWidget {
     );
   }
 }
+
+
+
+
+//  child: ChangeNameCard(
+//                   myText: myText, nameController: _nameController),
